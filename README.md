@@ -1,14 +1,14 @@
 # virtprint - Virtual Printer for Windows
 
-A Python program that creates a virtual printer on Windows that accepts print jobs and converts them to PDF or image files, saving them to `C:\temp`.
+A Python-based Windows service that creates a virtual printer that accepts print jobs and converts them to PDF or image files, saving them to user-defined location on the file system.
 
 ## Features
 
-- Creates a virtual printer 
+- Creates a virtual printer
+- Runs as a service
 - Automatically captures print jobs sent to the virtual printer
 - Converts print jobs to PDF or image formats (PNG, JPEG, TIFF)
-- Configurable output format and image quality settings
-- Saves output files to `C:\temp` with timestamps
+- Configurable output folder, format and image quality settings
 - Provides fallback text file creation if conversion fails
 - Comprehensive logging of all operations
 
@@ -16,8 +16,8 @@ A Python program that creates a virtual printer on Windows that accepts print jo
 
 - Windows 10 or later (requires Microsoft PostScript driver)
 - Python 3.6 or later
-- Administrator privileges (for printer installation)
-- GhostScript (downloaded during installation)
+- Administrator privileges (for service installation / printer creation if run as standalone)
+- GhostScript (downloaded to local install location during `install.py`)
 
 ## Installation
 
@@ -25,7 +25,7 @@ A Python program that creates a virtual printer on Windows that accepts print jo
 
 2. If using default settings, Install the Windows PostScript Class Driver
 
-3. Install GhostScript, service and its virtual env:
+3. Install GhostScript, service and its virtual env (if you want to install as a service, this needs to be run as an admin!):
    ```cmd
    python install.py
    ```
@@ -49,12 +49,13 @@ IMAGE_COLOR_DEPTH = "24bit"  # Options: "24bit", "8bit", "1bit"
 ```
 
 ### Other Settings
+These should not be changed
 - `PRINTER_NAME` - Name of the virtual printer
 - `OUTPUT_DIR` - Directory where files are saved
 - `DRIVER_NAME` - Windows printer driver to use
 - `PORT_NAME` - Printer port configuration
 
-## Custom Callbacks
+## Custom Callbacks !
 
 virtprint supports custom callbacks that are triggered when a print job is completed. Edit `callbacks.py` to define what happens after each print job.
 
