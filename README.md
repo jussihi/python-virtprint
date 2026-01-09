@@ -1,4 +1,4 @@
-# VirtPrint - Virtual Printer for Windows
+# virtprint - Virtual Printer for Windows
 
 A Python program that creates a virtual printer on Windows that accepts print jobs and converts them to PDF or image files, saving them to `C:\temp`.
 
