@@ -41,9 +41,9 @@ from virtprint import VirtualPrinter
 class VirtPrintService(win32serviceutil.ServiceFramework):
     """Windows Service for VirtPrint virtual printer."""
     
-    _svc_name_ = "VirtPrint"
-    _svc_display_name_ = "VirtPrint Virtual Printer Service"
-    _svc_description_ = "Virtual printer service that converts print jobs to PDF/image files"
+    _svc_name_ = settings.SERVICE_NAME
+    _svc_display_name_ = settings.SERVICE_DISPLAY_NAME
+    _svc_description_ = settings.SERVICE_DESCRIPTION
     
     # Use the venv Python interpreter
     _exe_name_ = str(VENV_DIR / "Scripts" / "python.exe") if VENV_DIR.exists() else sys.executable
@@ -170,7 +170,9 @@ class VirtPrintService(win32serviceutil.ServiceFramework):
                 self.logger.info("="*60)
                 self.logger.info("VirtPrint service initializing...")
                 self.logger.info(f"Script directory: {SCRIPT_DIR}")
+                self.logger.info(f"Mode: TCP Printer")
                 self.logger.info(f"Printer name: {settings.PRINTER_NAME}")
+                self.logger.info(f"TCP Address: {settings.TCP_HOST}:{settings.TCP_PORT}")
                 self.logger.info(f"Output directory: {settings.OUTPUT_DIR}")
                 self.logger.info(f"Output format: {settings.OUTPUT_FORMAT}")
                 self.logger.info("="*60)
@@ -180,8 +182,11 @@ class VirtPrintService(win32serviceutil.ServiceFramework):
             if self.logger:
                 self.logger.info("Creating VirtualPrinter instance...")
             
+            # Use TCP mode settings from settings.py
             self.printer = VirtualPrinter(
                 printer_name=settings.PRINTER_NAME,
+                host=settings.TCP_HOST,
+                port=settings.TCP_PORT,
                 output_dir=settings.OUTPUT_DIR,
                 output_format=settings.OUTPUT_FORMAT
             )
@@ -190,11 +195,7 @@ class VirtPrintService(win32serviceutil.ServiceFramework):
             if self.logger:
                 self.logger.info("Installing printer if needed...")
             
-            if not self.printer.install_printer():
-                if self.logger:
-                    self.logger.error("Failed to install printer")
-                servicemanager.LogErrorMsg("VirtPrint: Failed to install printer")
-                return  # Exit the initialization thread
+            self.printer.install_printer()
             
             # Start the printer monitoring
             if self.logger:

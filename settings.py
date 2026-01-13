@@ -1,6 +1,6 @@
 """
 Virtual Printer Configuration Settings
-All configurable settings for the virtual printer application.
+All configurable settings for the TCP virtual printer application.
 
 Output Format Options:
 - Set OUTPUT_FORMAT to control the output file type:
@@ -8,6 +8,8 @@ Output Format Options:
   * "PNG" - PNG image format
   * "JPEG" - JPEG image format  
   * "TIFF" - TIFF image format
+  * "PS" - PostScript
+  * "RAW" - Raw print data
 
 Image Quality Settings:
 - IMAGE_DPI: Resolution for image output (72-1200, typically 300 for print quality)
@@ -16,44 +18,30 @@ Image Quality Settings:
   * "8bit" - Grayscale
   * "1bit" - Monochrome/black & white
 
-Note: Image conversion requires GhostScript to be installed and in PATH.
-For best results with image output, install GhostScript from: https://ghostscript.com/
+Note: Image conversion requires GhostScript. It can be installed by running install.py
+or by manually downloading it from https://www.ghostscript.com/download/gsdnld.html
 """
 
+# TCP Configuration
+TCP_HOST = "127.0.0.1"  # Loopback address for local printer
+TCP_PORT = 9100  # Standard RAW/JetDirect port
+
+# Windows Service Configuration
+SERVICE_NAME = "virtprint"
+SERVICE_DISPLAY_NAME = "virtprint Virtual Printer Service"
+SERVICE_DESCRIPTION = "Virtual printer service that converts print jobs to PDF/image files"
+
 # Printer Configuration
+WINDOWS_PRINTER_PORT_NAME = f"{SERVICE_NAME}_{TCP_PORT}"
 PRINTER_NAME = "Virtual File Printer"
-DRIVER_NAME = "Microsoft PS Class Driver"  # PostScript driver - widely available
-PORT_NAME = "LPT1:"  # Default port for virtual printer
+DRIVER_NAME = "Microsoft PS Class Driver"  # PostScript driver for Windows printer integration
 
 # Output Settings
 OUTPUT_DIR = "C:\\temp"
-OUTPUT_FORMAT = "PNG"  # Options: "PDF", "PNG", "JPEG", "TIFF"
+OUTPUT_FORMAT = "PDF"  # Options: "PDF", "PNG", "JPEG", "TIFF", "PS", "RAW"
 IMAGE_DPI = 300  # DPI for image output (higher = better quality, larger file)
 IMAGE_COLOR_DEPTH = "24bit"  # Options: "24bit" (color), "8bit" (grayscale), "1bit" (monochrome)
 
-# Printer Info Dictionary
-PRINTER_INFO = {
-    'pServerName': None,  # None means local machine
-    'pShareName': '',  # Empty string means not shared
-    'pPrintProcessor': 'winprint',
-    'pDatatype': 'RAW',
-    'pSepFile': '',  # Separator file (empty means none)
-    'pLocation': 'Virtual PDF Printer',
-    'pComment': 'Virtual printer that converts print jobs to PDF',
-    'pParameters': '',  # Printer parameters (empty means default)
-    'pSecurityDescriptor': None,  # Security descriptor (None means default)
-    'Attributes': None,  # Will be set to win32print.PRINTER_ATTRIBUTE_LOCAL at runtime
-    'Priority': 1,  # Printer priority (1 = normal)
-    'DefaultPriority': 1,  # Default priority for print jobs (1 = normal)
-    'StartTime': 0,  # Start time for printer availability (0 = always available)
-    'UntilTime': 0,  # End time for printer availability (0 = always available)
-    'Status': 0,  # Printer status (0 = ready/idle)
-    'cJobs': 0,  # Number of jobs currently in queue (0 = empty)
-    'AveragePPM': 60  # Average pages per minute (60 = fast virtual printer)
-}
-
-# Alternative ports to try if the default port is not available
-ALTERNATIVE_PORTS = ["LPT1:", "COM1:", "FILE:", "USB001", "USB002"]
 
 # Logging Configuration
 LOG_FILE = 'virtprint.log'
